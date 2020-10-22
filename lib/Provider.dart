@@ -35,19 +35,19 @@ class Event{
 			try{
 				if(_emap[eventName].contains(listener))listener(arg); 
 			}catch(exception, stack){
-					FlutterError.reportError(FlutterErrorDetails(
-						exception: exception,
-						stack: stack,
-						library: "foundation library",
-						context: ErrorDescription("while dispatching notifications for $runtimeType"),
-						informationCollector: () sync *{
-							yield DiagnosticsProperty<Event>(
-								"The $runtimeType sending notification was",
-								this,
-								style:DiagnosticsTreeStyle.errorProperty,
-							);
-						}
-					));
+				FlutterError.reportError(FlutterErrorDetails(
+					exception: exception,
+					stack: stack,
+					library: "foundation library",
+					context: ErrorDescription("while dispatching notifications for $runtimeType"),
+					informationCollector: () sync *{
+						yield DiagnosticsProperty<Event>(
+							"The $runtimeType sending notification was",
+							this,
+							style:DiagnosticsTreeStyle.errorProperty,
+						);
+					}
+				));
 			}
 		}
 	}
