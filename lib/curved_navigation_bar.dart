@@ -13,7 +13,7 @@ class CurvedNavigationBar extends StatefulWidget {
 
   CurvedNavigationBar({
     Key key,
-    @required this.items,
+    this.items,
     this.index = 0,
     this.color = Colors.white,
     this.buttonBackgroundColor,
@@ -48,7 +48,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar> with SingleTic
     _length = widget.items.length;
     _pos = widget.index / _length;
     _startingPos = widget.index / _length;
-    _animationController = AnimationController(vsync: this, value: _pos);
+    _animationController = AnimationController( value: _pos);
     _animationController.addListener(() {
       setState(() {
         _pos = _animationController.value;

@@ -64,7 +64,6 @@ class Event{
 		return true;
 	}
 
-	@mustCallSuper
 	void dispose(){
 		// assert(_debugAssertNotDisposed());
 		_emap = null;
@@ -76,7 +75,7 @@ class MultDom{
 
 	void setData<T>(String key,T data){
 		if(_domList != null && key.isNotEmpty && _domList[key] != null){
-			_domList[key].SetCurrent(data);
+			_domList[key].setData = data;
 		}
 	}
 	void disDom([String key]){
@@ -87,52 +86,54 @@ class MultDom{
 					return true;
 				});
 				_domList = null;
-			}else if(_domList[key] != null && !_domList[key].controller.isClosed){
+			}else if(_domList[key] != null && !_domList[key].isClose){
 				_domList[key].dispose();
 				_domList.remove(key);
 			}
 		}
 	}
-	Widget builder<T>(@required String key,@required Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]){
+	Widget builder<T>( String key, Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]){
 		if(_domList != null && key.isNotEmpty){
 			if(_domList[key] != null){
-				_domList[key].SetCurrent(initData);
-				return _domList[key].GetWidget();
-			}else{
-				_domList[key]=SingleDataLine<T>(observer, initData);
-				return _domList[key].GetWidget();
-			}
-		}
-		return null;
-	}
-	Widget getDom(String key){
-		if(_domList != null && key.isNotEmpty){
-			_domList[key].GetWidget();
-		}
-	}
-}
-
-class SingleDataLine<T>{
-	StreamController<T> _stream;
-	Widget _dom;
-	T _currentData;
-
-	SingleDataLine( Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]){
-		_currentData = initData;
-		_stream = StreamController<T>();
-
-		_dom = StreamBuilder(
-			stream: _stream.stream,
-			builder: observer,
-		);
-	}
-	get GetWidget()=>_dom;
-	set SetCurrent(T data){
-		if(_currentData != data){
-			_stream.add(data);
-		}
-	},
-	void dispose(){
-		_stream.close();
-	}
+				_domList[key].setData =initData;
+                return _domList[key].getWidget;
+              }else{
+                _domList[key]=SingleDataLine<T>(observer, initData);
+                return _domList[key].getWidget;
+              }
+            }
+            return null;
+          }
+          Widget getDom(String key){
+            if(_domList != null && key.isNotEmpty){
+              _domList[key].getWidget;
+            }
+          }
+        }
+        
+        class SingleDataLine<T>{
+          StreamController<T> _stream;
+          Widget _dom;
+          T _currentData;
+        
+          SingleDataLine( Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]){
+            _currentData = initData;
+            _stream = StreamController<T>();
+        
+            _dom = StreamBuilder(
+              stream: _stream.stream,
+              builder: observer,
+            );
+          }
+          get getWidget=>_dom;
+          set setData(T data){
+            if(_currentData != data){
+              _stream.add(data);
+            }
+          }
+          get isClose=>_stream.isClosed;
+          void dispose(){
+            _stream.close();
+          }
+        
 }
