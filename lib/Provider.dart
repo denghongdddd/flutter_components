@@ -4,18 +4,19 @@ import 'package:flutter/src/widgets/async.dart';
 import 'dart:async';
 
 //订阅者回调签名
-typedef void EventCallback(arg);
+// typedef void EventCallback<T>(T arg);
+
 class Event{
 	Map<String,ObserverList> _emap = Map<String,ObserverList>();
 
 	///添加订阅者
-	void on(String eventName,EventCallback f){
+	void on<T>(String eventName, void Function(T arg) f){
 		if( eventName == null || f==null)return;
 		_emap[eventName]??=ObserverList();
 		_emap[eventName].add(f);
 	}
 	///移除订阅者
-	void off(String eventName,[EventCallback f]){
+	void off<T>(String eventName,[void Function(T arg) f]){
 		if(eventName ==null|| _emap[eventName]==null)return;
 		if(f==null){
 			_emap.remove(eventName);
@@ -27,10 +28,10 @@ class Event{
 		}
 	}
 	///触发事件
-	void emit(String eventName, [arg]){
+	void emit<T>(String eventName, [T arg]){
 		if( eventName==null || _emap[eventName]==null)return;
-		final List<EventCallback> localListeners = List<EventCallback>.from(_emap[eventName]);
-		for(final EventCallback listener in localListeners){
+		final List<void Function(T arg)> localListeners = List<void Function(T arg)>.from(_emap[eventName]);
+		for(final void Function(T arg) listener in localListeners){
 			try{
 				if(_emap[eventName].contains(listener))listener(arg); 
 			}catch(exception, stack){
@@ -86,7 +87,7 @@ class MultDom{
 					return true;
 				});
 				_domList = null;
-			}else if(_domList[key] != null && !_domList[key].isClose){
+			}else if(_domList[key] != null ){
 				_domList[key].dispose();
 				_domList.remove(key);
 			}
@@ -94,46 +95,43 @@ class MultDom{
 	}
 	Widget builder<T>( String key, Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]){
 		if(_domList != null && key.isNotEmpty){
-			if(_domList[key] != null){
-				_domList[key].setData =initData;
-                return _domList[key].getWidget;
-              }else{
-                _domList[key]=SingleDataLine<T>(observer, initData);
-                return _domList[key].getWidget;
-              }
-            }
-            return null;
-          }
-          Widget getDom(String key){
-            if(_domList != null && key.isNotEmpty){
-              _domList[key].getWidget;
-            }
-          }
-        }
+			_domList[key] ??=SingleDataLine<T>(observer, initData);
+			_domList[key].setData = initData;
+			return _domList[key].getWidget;
+		}
+		return null;
+	}
+	
+	Widget getDom(String key){
+		if(_domList != null && key.isNotEmpty){
+			_domList[key].getWidget;
+		}
+		return null;
+	}
+}
         
-        class SingleDataLine<T>{
-          StreamController<T> _stream;
-          Widget _dom;
-          T _currentData;
-        
-          SingleDataLine( Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]){
-            _currentData = initData;
-            _stream = StreamController<T>();
-        
-            _dom = StreamBuilder(
-              stream: _stream.stream,
-              builder: observer,
-            );
-          }
-          get getWidget=>_dom;
-          set setData(T data){
-            if(_currentData != data){
-              _stream.add(data);
-            }
-          }
-          get isClose=>_stream.isClosed;
-          void dispose(){
-            _stream.close();
-          }
+class SingleDataLine<T>{
+	StreamController<T> _stream;
+	Widget _dom;
+	T _currentData;
+
+	SingleDataLine( Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]){
+		_currentData = initData;
+		_stream = StreamController<T>();
+	
+		_dom = StreamBuilder(
+			stream: _stream.stream,
+			builder: observer,
+		);
+	}
+	get getWidget=>_dom;
+	set setData(T data){
+		if(_currentData != data){
+			_stream.add(data);
+		}
+	}
+	void dispose(){
+		_stream.close();
+	}
         
 }
