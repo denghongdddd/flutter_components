@@ -1,9 +1,6 @@
 .DS_Store
-.dart_tool/
-android/
 .packages
 .pub/
-test/
 ios/.generated/
 ios/Flutter/Generated.xcconfig
 ios/Runner/GeneratedPluginRegistrant.*
