@@ -124,7 +124,7 @@ class SingleDataLine<T>{
 			builder: observer,
 		);
 	}
-	get getWidget=>_dom;
+	Widget get getWidget=>_dom;
 	set setData(T data){
 		if(_currentData != data){
 			_stream.add(data);
