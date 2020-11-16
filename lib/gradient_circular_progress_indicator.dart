@@ -145,8 +145,7 @@ class _GradientCircularProgressPainter extends CustomPainter {
       paint.shader = SweepGradient(
         startAngle: 0.0,
         endAngle: _value,
-        colors: colors,
-        stops: stops,
+        List: colors,
       ).createShader(rect);
 
       canvas.drawArc(rect, _start, _value, false, paint);

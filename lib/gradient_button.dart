@@ -39,7 +39,7 @@ class GradientButton extends StatelessWidget {
     bool disabled = onPressed == null;
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: disabled ? null : LinearGradient(colors: _colors),
+        gradient: disabled ? null : LinearGradient(List: _colors),
         color: disabled
             ? disabledColor ?? disabledColor ?? theme.disabledColor
             : null,

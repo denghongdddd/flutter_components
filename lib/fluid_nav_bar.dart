@@ -25,14 +25,8 @@ class _FluidNavBarState extends State<FluidNavBar> with TickerProviderStateMixin
 
   @override
   void initState() {
-    _xController = AnimationController(
-      vsync: this,
-      animationBehavior: AnimationBehavior.preserve
-    );
-    _yController = AnimationController(
-      vsync: this,
-      animationBehavior: AnimationBehavior.preserve
-    );
+    _xController = AnimationController( animationBehavior: AnimationBehavior.preserve );
+    _yController = AnimationController( animationBehavior: AnimationBehavior.preserve );
 
     Listenable.merge([ _xController, _yController ]).addListener(() {
       setState(() {
@@ -324,7 +318,7 @@ class _FluidNavBarButtonState extends State<FluidNavBarButton> with SingleTicker
 		_animationController = AnimationController(
 			duration: const Duration(milliseconds: 1666),
 			reverseDuration: const Duration(milliseconds: 833),
-			vsync: this);
+		);
 		_animation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController)
 		..addListener(() {
 			setState(() {

@@ -18,7 +18,7 @@ class _bottomNavigationBarState extends State<bottomNavigationBar> with TickerPr
 
 	@override
 	void initState(){
-		animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500) )
+		animationController = AnimationController( duration: const Duration(milliseconds: 500) )
 			..addListener(() {
 				setState(() {
 				  animationValue=animationController.value;

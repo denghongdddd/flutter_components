@@ -27,7 +27,7 @@ class _AnimatedRotationBoxState extends State<AnimatedRotationBox>
   void initState() {
     super.initState();
     _animationController =
-        AnimationController(vsync: this, duration: widget.duration);
+        AnimationController( duration: widget.duration);
     _animationController.repeat();
   }
 
