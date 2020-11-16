@@ -71,67 +71,69 @@ class Event{
 	}
 }
 
-class MultDom{
-	Map<String, SingleDataLine> _domList = Map();
+class MultDom {
+  Map<String, SingleDataLine> _domList = Map();
 
-	void setData<T>(String key,T data){
-		if(_domList != null && key.isNotEmpty && _domList[key] != null){
-			_domList[key].setData = data;
-		}
-	}
-	void disDom([String key]){
-		if(_domList != null ){
-			if(key == null || key.isEmpty){
-				_domList.removeWhere((key, value){
-					value.dispose();
-					return true;
-				});
-				_domList = null;
-			}else if(_domList[key] != null ){
-				_domList[key].dispose();
-				_domList.remove(key);
-			}
-		}
-	}
-	Widget builder<T>( String key, Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]){
-		if(_domList != null && key.isNotEmpty){
-			_domList[key] ??=SingleDataLine<T>(observer, initData);
-			_domList[key].setData = initData;
-			return _domList[key].getWidget;
-		}
-		return null;
-	}
-	
-	Widget getDom(String key){
-		if(_domList != null && key.isNotEmpty){
-			_domList[key].getWidget;
-		}
-		return null;
-	}
+  void setData<T>(String key, T data) {
+    if (_domList != null && key.isNotEmpty && _domList[key] != null) {
+      _domList[key].setData = data;
+    }
+  }
+
+  void disDom([String key]) {
+    if (_domList != null) {
+      if (key == null || key.isEmpty) {
+        _domList.removeWhere((key, value) {
+          value.dispose();
+          return true;
+        });
+        _domList = null;
+      } else if (_domList[key] != null) {
+        _domList[key].dispose();
+        _domList.remove(key);
+      }
+    }
+  }
+
+  Widget builder<T>(String key, Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]) {
+    if (_domList != null && key.isNotEmpty) {
+      _domList[key] ??= SingleDataLine<T>(observer);
+      _domList[key].setData = initData;
+      return _domList[key].getWidget;
+    }
+    return null;
+  }
+
+  Widget getDom(String key) {
+    if (_domList != null && key.isNotEmpty) {
+      return _domList[key].getWidget;
+    }
+    return null;
+  }
 }
-        
-class SingleDataLine<T>{
-	StreamController<T> _stream;
-	Widget _dom;
-	T _currentData;
 
-	SingleDataLine( Widget Function(BuildContext context, AsyncSnapshot<T> data) observer, [T initData]){
-		_currentData = initData;
-		_stream = StreamController<T>();
-	
-		_dom = StreamBuilder(
-			stream: _stream.stream,
-			builder: observer,
-		);
-	}
-	Widget get getWidget=>_dom;
-	set setData(T data){
-		if(_currentData != data){
-			_stream.add(data);
-		}
-	}
-	void dispose(){
-		_stream.close();
-	}
-        
+class SingleDataLine<T> {
+  StreamController<T> _stream;
+  Widget _dom;
+  T _currentData;
+
+  SingleDataLine(
+      Widget Function(BuildContext context, AsyncSnapshot<T> data) observer) {
+    _stream = StreamController<T>.broadcast();
+
+    _dom = StreamBuilder(
+      stream: _stream.stream,
+      builder: observer,
+    );
+  }
+  Widget get getWidget => _dom;
+  set setData(T data) {
+    if (_currentData != data) {
+      _stream.add(data);
+    }
+  }
+
+  void dispose() {
+    _stream.close();
+  }
 }
